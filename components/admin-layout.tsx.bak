@@ -1,0 +1,61 @@
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { FileText, Image as ImageIcon, Music, LayoutDashboard, ArrowLeft, Sparkles, Menu as MenuIcon } from 'lucide-react'
+
+const navItems = [
+  { href: '/admin', label: '仪表盘', icon: LayoutDashboard },
+  { href: '/admin/articles', label: '文章管理', icon: FileText },
+  { href: '/admin/images', label: '图片管理', icon: ImageIcon },
+  { href: '/admin/music', label: '音乐管理', icon: Music },
+  { href: '/admin/hero', label: '首页编辑', icon: Sparkles },
+]
+
+export function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+
+  return (
+    <div className="min-h-screen bg-secondary/30">
+      {/* 侧边栏 */}
+      <aside className="fixed inset-y-0 left-0 z-50 w-60 border-r border-border bg-card">
+        <div className="flex h-16 items-center gap-2 border-b border-border px-6">
+          <span className="text-lg font-bold text-foreground">管理后台</span>
+        </div>
+        <nav className="space-y-1 p-3">
+          {navItems.map(item => {
+            const active = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href))
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
+                  active
+                    ? 'bg-primary text-primary-foreground font-medium'
+                    : 'text-foreground/70 hover:bg-secondary hover:text-foreground'
+                }`}
+              >
+                <item.icon className="size-4" />
+                {item.label}
+              </Link>
+            )
+          })}
+        </nav>
+        <div className="absolute bottom-0 w-full border-t border-border p-3">
+          <Link
+            href="/"
+            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-foreground/70 transition-colors hover:bg-secondary hover:text-foreground"
+          >
+            <ArrowLeft className="size-4" />
+            返回博客
+          </Link>
+        </div>
+      </aside>
+
+      {/* 内容区 */}
+      <main className="ml-60 min-h-screen p-8">
+        {children}
+      </main>
+    </div>
+  )
+}
