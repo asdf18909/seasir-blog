@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
 
-const isProd = process.env.NODE_ENV === 'production'
-
 const nextConfig = {
   output: 'export',
 
@@ -15,8 +13,9 @@ const nextConfig = {
 
   trailingSlash: true,
 
-  assetPrefix: isProd ? 'https://airestart.indevs.in/' : undefined,
+  basePath: '/seasir-blog',
 
+  assetPrefix: '/seasir-blog/',
 }
 
 export default nextConfig
