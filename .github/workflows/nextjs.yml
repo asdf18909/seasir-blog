@@ -1,5 +1,6 @@
 name: Deploy Next.js site to Pages
 
+
 on:
   push:
     branches:
@@ -26,7 +27,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-
     steps:
 
       - name: Checkout
@@ -36,7 +36,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 11.15.0
 
 
       - name: Setup Node
@@ -47,7 +47,7 @@ jobs:
 
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
 
       - name: Build Next.js
