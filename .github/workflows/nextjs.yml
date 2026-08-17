@@ -46,10 +46,11 @@ jobs:
           cache: pnpm
 
 
-      # 解决 pnpm 11 ignored builds（仅允许 msw 构建，见 pnpm-workspace.yaml）
+      # 静态导出不需要任何依赖的构建脚本；显式忽略以避免
+      # ERR_PNPM_IGNORED_BUILDS（如传递依赖 msw 的 postinstall 未批准）
       - name: Configure pnpm
         run: |
-          pnpm config set ignore-scripts false
+          pnpm config set ignore-scripts true
 
 
       - name: Install dependencies
