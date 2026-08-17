@@ -12,6 +12,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  issues: write
 
 
 concurrency:
@@ -64,22 +65,6 @@ jobs:
           done
 
 
-      # install 失败时把完整报错写进一个公开 Issue，便于无 token 诊断
-      - name: Capture install error to issue
-        if: failure()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          pnpm install --no-frozen-lockfile > /tmp/install_err.log 2>&1 || true
-          B64=$(base64 -w0 /tmp/install_err.log)
-          curl -sS -X POST \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            -H "Content-Type: application/json" \
-            -d "{\"title\":\"CI-install-error\",\"body\":\"$B64\"}" \
-            https://api.github.com/repos/asdf18909/seasir-blog/issues || echo "failed to create issue"
-
-
       - name: Approve pnpm builds
         run: |
           pnpm approve-builds -y || true
@@ -87,7 +72,26 @@ jobs:
 
       - name: Build Next.js
         run: |
-          pnpm build
+          pnpm build 2>&1 | tee /tmp/build.log
+          code=${PIPESTATUS[0]}
+          if [ "$code" -ne 0 ]; then echo "build failed code=$code"; exit $code; fi
+
+
+      # 任意步骤失败时把对应日志写进公开 Issue，便于无 token 诊断
+      - name: Capture error to issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LOG=/tmp/build.log
+          [ -s "$LOG" ] || pnpm build > "$LOG" 2>&1 || true
+          B64=$(base64 -w0 "$LOG")
+          curl -sS -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Content-Type: application/json" \
+            -d "{\"title\":\"CI-build-error\",\"body\":\"$B64\"}" \
+            https://api.github.com/repos/asdf18909/seasir-blog/issues || echo "failed to create issue"
 
 
       - name: Upload artifact
