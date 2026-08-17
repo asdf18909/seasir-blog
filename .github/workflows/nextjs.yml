@@ -45,7 +45,7 @@ jobs:
           cache: pnpm
 
 
-      # 解决 pnpm 11 ignored builds
+      # 解决 pnpm 11 ignored builds（仅允许 msw 构建，见 pnpm-workspace.yaml）
       - name: Configure pnpm
         run: |
           pnpm config set ignore-scripts false
@@ -53,7 +53,31 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm install --no-frozen-lockfile
+          for i in 1 2 3; do
+            echo "=== pnpm install attempt $i ==="
+            if pnpm install --no-frozen-lockfile; then
+              echo "install succeeded on attempt $i"
+              break
+            fi
+            echo "install attempt $i failed, retrying in 10s..."
+            sleep 10
+          done
+
+
+      # install 失败时把完整报错写进一个公开 Issue，便于无 token 诊断
+      - name: Capture install error to issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pnpm install --no-frozen-lockfile > /tmp/install_err.log 2>&1 || true
+          B64=$(base64 -w0 /tmp/install_err.log)
+          curl -sS -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Content-Type: application/json" \
+            -d "{\"title\":\"CI-install-error\",\"body\":\"$B64\"}" \
+            https://api.github.com/repos/asdf18909/seasir-blog/issues || echo "failed to create issue"
 
 
       - name: Approve pnpm builds
