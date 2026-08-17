@@ -1,71 +1,179 @@
 {
   "items": [
-    { "label": "主页", "href": "/", "icon": "home" },
-    { "label": "关于", "href": "/about", "icon": "info" },
+    {
+      "label": "主页",
+      "href": "/",
+      "icon": "home"
+    },
+    {
+      "label": "关于",
+      "href": "/about",
+      "icon": "info"
+    },
     {
       "label": "文章",
       "icon": "file-text",
       "children": [
-        { "label": "归档", "href": "/archive", "icon": "archive" },
-        { "label": "分类", "href": "/categories", "icon": "folder" },
-        { "label": "标签", "href": "/tags", "icon": "tag" }
+        {
+          "label": "归档",
+          "href": "/archive",
+          "icon": "archive"
+        },
+        {
+          "label": "分类",
+          "href": "/categories",
+          "icon": "folder"
+        },
+        {
+          "label": "标签",
+          "href": "/tags",
+          "icon": "tag"
+        }
       ]
     },
     {
       "label": "社交",
       "icon": "users",
       "children": [
-        { "label": "友链", "href": "/links", "icon": "link" },
-        { "label": "留言", "href": "/comments", "icon": "message-circle" }
+        {
+          "label": "友链",
+          "href": "/links",
+          "icon": "link"
+        },
+        {
+          "label": "留言",
+          "href": "/comments",
+          "icon": "message-circle"
+        }
       ]
     },
     {
       "label": "动态",
       "icon": "zap",
       "children": [
-        { "label": "朋友圈", "href": "/moments", "icon": "image" },
-        { "label": "动态", "href": "/status", "icon": "activity" },
-        { "label": "日记", "href": "/diary", "icon": "book" }
+        {
+          "label": "朋友圈",
+          "href": "/moments",
+          "icon": "image"
+        },
+        {
+          "label": "动态",
+          "href": "/status",
+          "icon": "activity"
+        },
+        {
+          "label": "日记",
+          "href": "/diary",
+          "icon": "book"
+        }
       ]
     },
     {
       "label": "我的",
       "icon": "user",
       "children": [
-        { "label": "相册", "href": "/album", "icon": "image" },
-        { "label": "追番", "href": "/anime", "icon": "tv" },
-        { "label": "番组计划", "href": "/bangumi", "icon": "calendar" },
-        { "label": "设备", "href": "/devices", "icon": "cpu" },
-        { "label": "音乐", "href": "/music", "icon": "music" },
-        { "label": "足迹", "href": "/footprint", "icon": "map-pin" },
-        { "label": "书签导航", "href": "/nav", "icon": "bookmark" }
+        {
+          "label": "相册",
+          "href": "/album",
+          "icon": "image"
+        },
+        {
+          "label": "追番",
+          "href": "/anime",
+          "icon": "tv"
+        },
+        {
+          "label": "番组计划",
+          "href": "/bangumi",
+          "icon": "calendar"
+        },
+        {
+          "label": "设备",
+          "href": "/devices",
+          "icon": "cpu"
+        },
+        {
+          "label": "音乐",
+          "href": "/music",
+          "icon": "music"
+        },
+        {
+          "label": "足迹",
+          "href": "/footprint",
+          "icon": "map-pin"
+        },
+        {
+          "label": "书签导航",
+          "href": "/nav",
+          "icon": "bookmark"
+        }
       ]
     },
     {
       "label": "更多",
       "icon": "info",
       "children": [
-        { "label": "打赏", "href": "/reward", "icon": "gift" }
+        {
+          "label": "打赏",
+          "href": "/reward",
+          "icon": "gift"
+        }
       ]
     },
     {
       "label": "其他",
       "icon": "more-horizontal",
       "children": [
-        { "label": "项目", "href": "/projects", "icon": "folder-git" },
-        { "label": "时间线", "href": "/timeline", "icon": "git-commit" },
-        { "label": "技能", "href": "/skills", "icon": "star" },
-        { "label": "统计", "href": "/stats", "icon": "bar-chart" }
+        {
+          "label": "项目",
+          "href": "/projects",
+          "icon": "folder-git"
+        },
+        {
+          "label": "时间线",
+          "href": "/timeline",
+          "icon": "git-commit"
+        },
+        {
+          "label": "技能",
+          "href": "/skills",
+          "icon": "star"
+        },
+        {
+          "label": "统计",
+          "href": "/stats",
+          "icon": "bar-chart"
+        }
       ]
     },
     {
       "label": "链接",
       "icon": "link-2",
       "children": [
-        { "label": "GitHub", "href": "https://github.com", "icon": "github", "external": true },
-        { "label": "Gitee", "href": "https://gitee.com", "icon": "git-branch", "external": true },
-        { "label": "CNB", "href": "https://cnb.cool", "icon": "cloud", "external": true },
-        { "label": "个人主页", "href": "#", "icon": "globe", "external": true }
+        {
+          "label": "GitHub",
+          "href": "https://github.com",
+          "icon": "github",
+          "external": true
+        },
+        {
+          "label": "Gitee",
+          "href": "https://gitee.com",
+          "icon": "git-branch",
+          "external": true
+        },
+        {
+          "label": "CNB",
+          "href": "https://cnb.cool",
+          "icon": "cloud",
+          "external": true
+        },
+        {
+          "label": "个人主页",
+          "href": "#",
+          "icon": "globe",
+          "external": true
+        }
       ]
     }
   ]
