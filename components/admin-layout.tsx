@@ -1,8 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { FileText, Image as ImageIcon, Music, LayoutDashboard, ArrowLeft, Sparkles, Menu as MenuIcon, Gift, Tv } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { FileText, Image as ImageIcon, Music, LayoutDashboard, ArrowLeft, Sparkles, Menu as MenuIcon, Gift, Tv, LogOut } from 'lucide-react'
+import { isAuthed, logout } from '@/lib/admin-auth'
 
 const navItems = [
   { href: '/admin', label: '仪表盘', icon: LayoutDashboard },
@@ -17,6 +19,19 @@ const navItems = [
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
+
+  // 未登录则跳转到登录页（仅挡误入，本地自用级别）
+  useEffect(() => {
+    if (!isAuthed()) {
+      router.replace('/admin/login')
+    }
+  }, [router])
+
+  const onLogout = () => {
+    logout()
+    router.replace('/admin/login')
+  }
 
   return (
     <div className="min-h-screen bg-secondary/30">
@@ -49,7 +64,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             )
           })}
         </nav>
-        <div className="absolute bottom-0 w-full border-t border-border p-3">
+        <div className="absolute bottom-0 w-full space-y-1 border-t border-border p-3">
           <Link
             href="/"
             className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-foreground/70 transition-colors hover:bg-secondary hover:text-foreground"
@@ -57,6 +72,13 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             <ArrowLeft className="size-4" />
             返回博客
           </Link>
+          <button
+            onClick={onLogout}
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-foreground/70 transition-colors hover:bg-secondary hover:text-foreground"
+          >
+            <LogOut className="size-4" />
+            退出登录
+          </button>
         </div>
       </aside>
 
