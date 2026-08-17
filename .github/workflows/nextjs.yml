@@ -119,3 +119,32 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+
+
+      # 成功后清理自身遗留的诊断 Issue（capture 步骤在失败时写入的 CI-build-error）
+      - name: Close stale CI-build-error issues
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import os, json, urllib.request
+          tok = os.environ['GH_TOKEN']
+          repo = 'asdf18909/seasir-blog'
+          base = f'https://api.github.com/repos/{repo}'
+          req = urllib.request.Request(
+            f'{base}/issues?state=open&per_page=100',
+            headers={'Authorization': f'Bearer {tok}', 'Accept': 'application/vnd.github+json'})
+          issues = json.load(urllib.request.urlopen(req))
+          for it in issues:
+              if it.get('title') == 'CI-build-error' and 'pull_request' not in it:
+                  n = it['number']
+                  r2 = urllib.request.Request(
+                    f'{base}/issues/{n}',
+                    data=json.dumps({'state': 'closed'}).encode(),
+                    headers={'Authorization': f'Bearer {tok}', 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json'},
+                    method='PATCH')
+                  urllib.request.urlopen(r2)
+                  print('closed stale issue #', n)
+          print('cleanup done')
+          PY
