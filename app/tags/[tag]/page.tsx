@@ -6,7 +6,9 @@ import { SiteFooter } from '@/components/site-footer'
 import { tags, articles } from '@/lib/data'
 
 export async function generateStaticParams() {
-  return tags.map((t) => ({ tag: encodeURIComponent(t) }))
+  const uniqueTags = Array.from(new Set(articles.flatMap((a) => a.tags)))
+  if (uniqueTags.length === 0) return [{ tag: 'placeholder' }]
+  return uniqueTags.map((t) => ({ tag: encodeURIComponent(t) }))
 }
 
 function formatDate(date: string) {

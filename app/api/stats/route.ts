@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { getStats, getArticles, countWords, getRunDays } from '@/lib/storage'
 import { articles as defaultArticles } from '@/lib/data'
 
+export const dynamic = 'force-static'
+
 /**
  * GET /api/stats
  * 返回组合好的站点统计数据：

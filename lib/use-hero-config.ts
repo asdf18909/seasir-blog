@@ -33,7 +33,7 @@ export function useHeroConfig(): HeroConfig {
 
   const load = useCallback(async () => {
     try {
-      const r = await fetch('/api/hero', { cache: 'no-store' })
+      const r = await fetch('/data/hero.json', { cache: 'no-store' })
       const data = await r.json()
       if (data && typeof data === 'object') {
         setConfig(prev => ({ ...HERO_FALLBACK, ...data }))

@@ -12,10 +12,6 @@ const nextConfig = {
   },
 
   trailingSlash: true,
-
-  basePath: '/seasir-blog',
-
-  assetPrefix: '/seasir-blog/',
 }
 
 export default nextConfig

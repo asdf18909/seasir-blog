@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { tags, articles } from '@/lib/data'
 
+export const dynamic = 'force-static'
+
 export async function GET() {
   const tagsWithCount = tags.map((t) => ({
     name: t,

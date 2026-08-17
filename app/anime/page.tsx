@@ -31,10 +31,12 @@ export default function AnimePage() {
   const [playing, setPlaying] = useState<AnimeItem | null>(null)
 
   useEffect(() => {
-    fetch('/api/anime')
+    // GitHub Pages 静态部署：直接读 JSON
+    fetch('/data/anime.json')
       .then(r => r.json())
       .then(data => {
-        setList(data.anime || [])
+        const items = Array.isArray(data) ? data : (data.anime || [])
+        setList(items)
         setLoading(false)
       })
       .catch(() => setLoading(false))

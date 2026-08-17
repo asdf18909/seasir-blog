@@ -44,7 +44,7 @@ export default function AdminImages() {
 
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`确定删除「${name}」吗？`)) return
-    await fetch(`/api/admin/images/${id}`, { method: 'DELETE' })
+    await fetch(`/api/admin/image/${id}`, { method: 'DELETE' })
     load()
   }
 

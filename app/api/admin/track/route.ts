@@ -3,6 +3,13 @@ import { deleteTrack } from '@/lib/storage'
 import { promises as fs } from 'fs'
 import path from 'path'
 
+export function generateStaticParams() {
+  return [{ id: 'placeholder' }]
+}
+
+
+export const dynamic = 'force-static'
+
 // 删除歌曲
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getArticles, saveArticle, deleteArticle } from '@/lib/storage'
 
+export function generateStaticParams() {
+  return [{ id: 'placeholder' }]
+}
+
+
+export const dynamic = 'force-static'
+
 // 获取单篇文章
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

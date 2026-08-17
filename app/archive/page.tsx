@@ -20,10 +20,11 @@ function ArchiveContent() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/articles')
+    // GitHub Pages 静态部署：直接读 JSON
+    fetch('/data/articles.json')
       .then(r => r.json())
       .then(data => {
-        const list = data.articles || data || []
+        const list = Array.isArray(data) ? data : (data.articles || [])
         setArticles(list)
         setLoading(false)
       })

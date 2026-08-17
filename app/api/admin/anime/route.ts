@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAnimeList, saveAnime, deleteAnime, generateId, type AnimeItem } from '@/lib/storage'
 
+export const dynamic = 'force-static'
+
 // 管理接口：获取全部追番
 export async function GET() {
   const list = await getAnimeList()

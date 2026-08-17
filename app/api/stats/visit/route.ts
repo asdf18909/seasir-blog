@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { recordVisit, getStats, getArticles, countWords, getRunDays } from '@/lib/storage'
 import { articles as defaultArticles } from '@/lib/data'
 
+export const dynamic = 'force-static'
+
 // 同一访客 30 分钟内不重复计数
 const DEDUPE_WINDOW_MS = 30 * 60 * 1000
 // 内存级去重缓存（进程重启会自动清空，但 visitorIds 会持久化兜底）

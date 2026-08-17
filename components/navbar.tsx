@@ -53,9 +53,9 @@ export function Navbar() {
   const hero = useHeroConfig()
   const displayRef = useRef<HTMLDivElement>(null)
 
-  // 加载导航（从管理后台配置读取，没有则用默认）
+  // 加载导航（GitHub Pages 静态部署：直接读 JSON）
   useEffect(() => {
-    fetch('/api/nav')
+    fetch('/data/nav.json')
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data.items)) setNavItems(data.items)
@@ -100,10 +100,10 @@ export function Navbar() {
       return
     }
     const timer = setTimeout(() => {
-      fetch('/api/articles')
+      fetch('/data/articles.json')
         .then(r => r.json())
         .then(data => {
-          const list = data.articles || data || []
+          const list = Array.isArray(data) ? data : (data.articles || [])
           const filtered = list.filter((a: any) =>
             a.title?.toLowerCase().includes(searchQ.toLowerCase()) ||
             a.excerpt?.toLowerCase().includes(searchQ.toLowerCase())

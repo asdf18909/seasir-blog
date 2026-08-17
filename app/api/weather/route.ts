@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const dynamic = 'force-static'
+
 // WMO 天气代码 → 中文描述 + 图标 key
 const WMO_CODE_MAP: Record<number, { condition: string; icon: string }> = {
   0:   { condition: '晴',       icon: 'sunny' },
@@ -117,126 +119,25 @@ async function geocodeCity(city: string): Promise<{ lat: number; lon: number; na
   }
 }
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url)
-  let lat = searchParams.get('lat')
-  let lon = searchParams.get('lon')
-  const cityQuery = searchParams.get('city')
-
-  // 情况 1：客户端传了经纬度
-  if (lat && lon) {
-    // 直接走下面的逻辑
-  }
-  // 情况 2：客户端传了城市名
-  else if (cityQuery) {
-    const geo = await geocodeCity(cityQuery)
-    if (!geo) {
-      return NextResponse.json({
-        error: 'city_not_found',
-        message: `找不到城市「${cityQuery}」`,
-      }, { status: 200 })
-    }
-    lat = String(geo.lat)
-    lon = String(geo.lon)
-  }
-  // 情况 3：什么都没有，尝试用 IP 定位（兜底）
-  else {
-    const ipLoc = await getLocationByIp(req)
-    if (ipLoc) {
-      lat = String(ipLoc.lat)
-      lon = String(ipLoc.lon)
-      // IP 定位拿到城市名了，后面直接用它，跳过 reverse-geocode
-      // 但为了统一流程，还是让 reverse-geocode 跑一遍（会有缓存）
-    } else {
-      return NextResponse.json({
-        error: 'missing_coords',
-        message: '无法获取你的位置，请手动输入城市名',
-      }, { status: 200 })
-    }
-  }
-
-  const latitude = parseFloat(lat!)
-  const longitude = parseFloat(lon!)
-
-  try {
-    // 并行：获取城市名 + 天气数据
-    const weatherController = new AbortController()
-    const weatherTimeout = setTimeout(() => weatherController.abort(), 10000)
-
-    const [cityName, weatherRes] = await Promise.all([
-      getCityName(latitude, longitude),
-      fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}` +
-        `&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl` +
-        `&hourly=pm2_5` +
-        `&daily=weather_code,temperature_2m_max,temperature_2m_min` +
-        `&timezone=auto&forecast_days=7`,
-        {
-          signal: weatherController.signal,
-          next: { revalidate: 1800 }, // 30分钟缓存
-        }
-      ),
-    ])
-
-    clearTimeout(weatherTimeout)
-
-    if (!weatherRes.ok) {
-      throw new Error(`Weather API error: ${weatherRes.status}`)
-    }
-
-    const data = await weatherRes.json()
-    const current = data.current
-    const daily = data.daily
-
-    // 当前 PM2.5（取当前小时）
-    const nowHour = new Date().getHours()
-    const currentPm25 = data.hourly?.pm2_5?.[nowHour] ?? 0
-    const aqi = aqiLevel(currentPm25)
-
-    const wmo = WMO_CODE_MAP[current.weather_code] || { condition: '未知', icon: 'cloudy' }
-
-    const todayForecast = daily.time.map((date: string, i: number) => {
-      const wmoF = WMO_CODE_MAP[daily.weather_code[i]] || { condition: '未知', icon: 'cloudy' }
-      const dt = new Date(date)
-      const today = new Date()
-      let label = ''
-      if (i === 0) label = '今天'
-      else if (i === 1) label = '明天'
-      else if (i === 2) label = '后天'
-      else label = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][dt.getDay()]
-
-      return {
-        day: label,
-        date: `${String(dt.getMonth() + 1).padStart(2, '0')}/${String(dt.getDate()).padStart(2, '0')}`,
-        icon: wmoF.icon,
-        condition: wmoF.condition,
-        high: Math.round(daily.temperature_2m_max[i]),
-        low: Math.round(daily.temperature_2m_min[i]),
-      }
-    })
-
-    const result = {
-      city: cityName,
-      today: {
-        temp: Math.round(current.temperature_2m),
-        feelsLike: Math.round(current.apparent_temperature),
-        condition: wmo.condition,
-        conditionIcon: wmo.icon,
-        humidity: Math.round(current.relative_humidity_2m),
-        windSpeed: Math.round(current.wind_speed_10m),
-        windDir: windDirText(current.wind_direction_10m),
-        pressure: Math.round(current.pressure_msl),
-        airQuality: aqi.label,
-        aqi: aqi.value,
-      },
-      forecast: todayForecast,
-    }
-
-    return NextResponse.json(result)
-  } catch (err: any) {
-    return NextResponse.json({
-      error: 'fetch_failed',
-      message: err.message || '天气数据获取失败',
-    }, { status: 200 })
-  }
+export async function GET() {
+  // 静态导出模式：本路由在 GitHub Pages 上不被调用
+  // （客户端已改用 lib/weather-client.ts 直连 Open-Meteo）。
+  // 此处仅返回静态占位响应，确保 next build 可静态渲染通过。
+  // 本地 `next dev` 下如需天气 API，请改用 lib/weather-client 的客户端实现。
+  return NextResponse.json({
+    city: '本地开发',
+    today: {
+      temp: 20,
+      feelsLike: 20,
+      condition: '晴',
+      conditionIcon: 'sunny',
+      humidity: 50,
+      windSpeed: 5,
+      windDir: '北风',
+      pressure: 1013,
+      airQuality: '优',
+      aqi: 30,
+    },
+    forecast: [],
+  })
 }

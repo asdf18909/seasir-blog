@@ -85,7 +85,7 @@ export function ArticleEditor({ articleId, onSaved }: ArticleEditorProps) {
 
   useEffect(() => {
     if (articleId) {
-      fetch(`/api/admin/articles/${articleId}`)
+      fetch(`/api/admin/article/${articleId}`)
         .then(r => r.json())
         .then(res => {
           if (res.article) {
@@ -152,7 +152,7 @@ export function ArticleEditor({ articleId, onSaved }: ArticleEditorProps) {
     }
     setSaving(true)
     try {
-      const url = articleId ? `/api/admin/articles/${articleId}` : '/api/admin/articles'
+      const url = articleId ? `/api/admin/article/${articleId}` : '/api/admin/articles'
       const method = articleId ? 'PUT' : 'POST'
       const res = await fetch(url, {
         method,

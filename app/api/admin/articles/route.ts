@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getArticles, saveArticle, generateId, slugify, type Article } from '@/lib/storage'
 
+export const dynamic = 'force-static'
+
 // 获取文章列表
 export async function GET() {
   const articles = await getArticles()

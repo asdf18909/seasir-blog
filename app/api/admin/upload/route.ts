@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { saveUploadedFile, saveImage, generateId } from '@/lib/storage'
 
+export const dynamic = 'force-static'
+
 // 上传文件（图片、音乐或视频）
 export async function POST(req: NextRequest) {
   const formData = await req.formData()

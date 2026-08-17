@@ -20,6 +20,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-secondary/30">
+      {/* GitHub Pages 静态托管提示 */}
+      <div className="bg-amber-500/95 px-4 py-2.5 text-center text-sm text-white shadow-sm">
+        <span className="font-medium">⚠️ 当前部署在 GitHub Pages 静态托管，管理功能（上传/编辑/删除）不可用。</span>
+        <span className="ml-2 opacity-90">如需管理内容，请编辑 <code className="rounded bg-white/20 px-1.5 py-0.5 font-mono text-xs">public/data/</code> 下的 JSON 文件后提交推送。</span>
+      </div>
       {/* 侧边栏 */}
       <aside className="fixed inset-y-0 left-0 z-50 w-60 border-r border-border bg-card">
         <div className="flex h-16 items-center gap-2 border-b border-border px-6">

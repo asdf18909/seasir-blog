@@ -74,7 +74,7 @@ export default function AdminMusic() {
 
   const handleDelete = async (id: number, title: string) => {
     if (!confirm(`确定删除「${title}」吗？`)) return
-    await fetch(`/api/admin/music/${id}`, { method: 'DELETE' })
+    await fetch(`/api/admin/track/${id}`, { method: 'DELETE' })
     load()
   }
 

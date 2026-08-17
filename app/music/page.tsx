@@ -28,7 +28,11 @@ export default function MusicPage() {
   const audio = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
-    fetch('/api/music').then(r => r.json()).then(d => { if (d.playlist?.length) { setTracks(d.playlist); setDur(d.playlist[0].duration) } }).catch(() => {})
+    // GitHub Pages 静态部署：直接读 JSON
+    fetch('/data/playlist.json').then(r => r.json()).then(d => {
+      const list = Array.isArray(d) ? d : (d.playlist || [])
+      if (list.length) { setTracks(list); setDur(list[0].duration) }
+    }).catch(() => {})
   }, [])
 
   const track = tracks[idx]

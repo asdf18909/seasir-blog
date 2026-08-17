@@ -22,7 +22,8 @@ export default function RewardPage() {
   })
 
   useEffect(() => {
-    fetch('/api/reward')
+    // GitHub Pages 静态部署：直接读 JSON
+    fetch('/data/reward.json')
       .then(r => r.json())
       .then(data => setReward({
         wechatQr: data.wechatQr || '',

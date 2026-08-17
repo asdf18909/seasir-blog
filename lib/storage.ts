@@ -2,7 +2,8 @@ import { promises as fs } from 'fs'
 import path from 'path'
 
 // ===== 路径常量 =====
-const DATA_DIR = path.join(process.cwd(), 'data')
+// GitHub Pages 静态部署：JSON 文件放在 public/data/ 下，构建时读取 + 运行时作为静态资源访问
+const DATA_DIR = path.join(process.cwd(), 'public', 'data')
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads')
 const MUSIC_DIR = path.join(process.cwd(), 'public', 'music')
 

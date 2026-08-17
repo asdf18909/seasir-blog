@@ -1,0 +1,15 @@
+{
+  "totalViews": 3,
+  "visits": 3,
+  "visitors": 3,
+  "startDate": "2026-08-08",
+  "lastActiveAt": "2026-08-08T03:01:59.578Z",
+  "dailyViews": {
+    "2026-08-08": 3
+  },
+  "visitorIds": [
+    "3a12586c-fd61-458e-bc9d-8122568db163",
+    "9c3291e8-c74c-4ffe-9fc5-b418ab63f4e6",
+    "different-uuid-9999"
+  ]
+}

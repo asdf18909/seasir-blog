@@ -8,6 +8,7 @@ import {
   MapPin,
 } from 'lucide-react'
 import { useStats } from '@/lib/use-stats'
+import { fetchWeatherClient } from '@/lib/weather-client'
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
@@ -101,79 +102,63 @@ function Weather() {
   const [cityInput, setCityInput] = useState('')
   const [usedIp, setUsedIp] = useState(false)
 
-  const fetchWeather = (lat?: number, lon?: number, city?: string) => {
+  const fetchWeather = async (lat?: number, lon?: number, city?: string) => {
     setLoading(true)
     setNeedPermission(false)
     setError(null)
-    let url = '/api/weather'
-    const params = new URLSearchParams()
-    if (lat && lon) {
-      params.set('lat', String(lat))
-      params.set('lon', String(lon))
-    } else if (city) {
-      params.set('city', city)
-    }
-    if (params.toString()) url += `?${params.toString()}`
 
-    // 15 秒超时保护
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 15000)
 
-    fetch(url, { signal: controller.signal })
-      .then((r) => r.json())
-      .then((d) => {
-        clearTimeout(timeoutId)
+    try {
+      // GitHub Pages 静态部署：直接调 Open-Meteo
+      const d = await fetchWeatherClient(lat, lon, city)
+      clearTimeout(timeoutId)
+      if ('error' in d) {
         if (d.error === 'missing_coords') {
           setNeedPermission(true)
           setShowCityInput(true)
-          setLoading(false)
         } else if (d.error === 'city_not_found') {
           setError(d.message || '找不到该城市')
           setShowCityInput(true)
-          setLoading(false)
-        } else if (d.error) {
+        } else {
           setWeather(null)
           setError(d.message || '天气数据获取失败')
-          setLoading(false)
-        } else {
-          setWeather(d)
-          setLoading(false)
         }
-      })
-      .catch(() => {
-        clearTimeout(timeoutId)
-        setWeather(null)
-        setError('天气数据获取超时，请重试')
-        setLoading(false)
-      })
+      } else {
+        setWeather(d)
+      }
+      setLoading(false)
+    } catch {
+      clearTimeout(timeoutId)
+      setWeather(null)
+      setError('天气数据获取超时，请重试')
+      setLoading(false)
+    }
   }
 
-  // IP 定位兜底（服务端会通过 IP 反查城市）
-  const fetchByIp = () => {
+  // IP 定位兜底（客户端通过 ipapi.co 获取位置）
+  const fetchByIp = async () => {
     setLoading(true)
     setUsedIp(true)
     setError(null)
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 15000)
-    fetch('/api/weather', { signal: controller.signal })
-      .then((r) => r.json())
-      .then((d) => {
-        clearTimeout(timeoutId)
-        if (d.error) {
-          setShowCityInput(true)
-          setError(d.message || '请手动输入城市名')
-          setLoading(false)
-        } else {
-          setWeather(d)
-          setLoading(false)
-        }
-      })
-      .catch(() => {
-        clearTimeout(timeoutId)
-        setShowCityInput(true)
-        setError('IP 定位超时，请手动输入城市名')
-        setLoading(false)
-      })
+    try {
+      const ctrl = new AbortController()
+      const timer = setTimeout(() => ctrl.abort(), 10000)
+      const res = await fetch('https://ipapi.co/json/', { signal: ctrl.signal })
+      clearTimeout(timer)
+      if (!res.ok) throw new Error('ipapi failed')
+      const d = await res.json()
+      if (d.latitude && d.longitude) {
+        await fetchWeather(d.latitude, d.longitude, d.city)
+        return
+      }
+      throw new Error('no coords')
+    } catch {
+      setShowCityInput(true)
+      setError('IP 定位失败，请手动输入城市名')
+      setLoading(false)
+    }
   }
 
   const requestLocation = () => {
@@ -425,7 +410,8 @@ function SiteInfo() {
   } | null>(null)
 
   useEffect(() => {
-    fetch('/api/site-info')
+    // GitHub Pages 静态部署：直接读取 site-info.json
+    fetch('/data/site-info.json')
       .then((r) => r.json())
       .then((d) => setInfo(d))
       .catch(() => {})

@@ -16,9 +16,21 @@ export default function StatsPage() {
     let stop = false
     const load = async () => {
       try {
-        const r = await fetch('/api/stats', { cache: 'no-store' })
+        // GitHub Pages 静态部署：从 stats.json 派生最近 30 天趋势
+        const r = await fetch('/data/stats.json', { cache: 'no-store' })
         const d = await r.json()
-        if (!stop && d.monthlyViews) setMonthly(d.monthlyViews)
+        if (!stop && d) {
+          const daily = d.dailyViews || {}
+          const today = new Date()
+          const monthly: { date: string; views: number }[] = []
+          for (let i = 29; i >= 0; i--) {
+            const dt = new Date(today)
+            dt.setDate(today.getDate() - i)
+            const key = dt.toISOString().slice(0, 10)
+            monthly.push({ date: key, views: daily[key] || 0 })
+          }
+          setMonthly(monthly)
+        }
       } catch {}
     }
     load()

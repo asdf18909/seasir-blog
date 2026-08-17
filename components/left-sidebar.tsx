@@ -72,14 +72,15 @@ function MusicPlayer() {
   const [repeat, setRepeat] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  // 获取播放列表
+  // 获取播放列表（GitHub Pages 静态部署：直接读 JSON）
   useEffect(() => {
-    fetch('/api/music')
+    fetch('/data/playlist.json')
       .then((res) => res.json())
       .then((data) => {
-        if (data.playlist?.length) {
-          setTracks(data.playlist)
-          setDuration(data.playlist[0].duration)
+        const list = Array.isArray(data) ? data : (data.playlist || [])
+        if (list.length) {
+          setTracks(list)
+          setDuration(list[0].duration)
         }
       })
       .catch(() => {})
@@ -319,8 +320,23 @@ function CategoriesTags() {
   const [tagList, setTagList] = useState<{ name: string; count: number }[]>([])
 
   useEffect(() => {
-    fetch('/api/categories').then((r) => r.json()).then((d) => setCats(d.categories || [])).catch(() => {})
-    fetch('/api/tags').then((r) => r.json()).then((d) => setTagList(d.tags || [])).catch(() => {})
+    // GitHub Pages 静态部署：从 articles.json 派生分类和标签
+    fetch('/data/articles.json')
+      .then((r) => r.json())
+      .then((data) => {
+        const list = Array.isArray(data) ? data : (data.articles || [])
+        const cats = [...new Set(list.map((a: any) => a.category).filter(Boolean))]
+        const tagMap = new Map<string, number>()
+        list.forEach((a: any) => (a.tags || []).forEach((t: string) => {
+          tagMap.set(t, (tagMap.get(t) || 0) + 1)
+        }))
+        const tags = [...tagMap.entries()]
+          .map(([name, count]) => ({ name, count }))
+          .sort((a, b) => b.count - a.count)
+        setCats(cats as any)
+        setTagList(tags)
+      })
+      .catch(() => {})
   }, [])
 
   return (
@@ -360,9 +376,9 @@ function Hitokoto() {
   const [quote, setQuote] = useState<{ content: string; author: string } | null>(null)
 
   useEffect(() => {
-    fetch('/api/hitokoto')
+    fetch('https://v1.hitokoto.cn/?c=k&encode=json')
       .then((r) => r.json())
-      .then((d) => setQuote(d))
+      .then((d) => setQuote({ content: d.hitokoto || d.content, author: d.from_who || d.from || '佚名' }))
       .catch(() => {
         setQuote({ content: '人生最大的幸福，是发现自己爱的人正好也爱着自己。', author: '张爱玲' })
       })

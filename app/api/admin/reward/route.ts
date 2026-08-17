@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getReward, saveReward, DEFAULT_REWARD } from '@/lib/storage'
 
+export const dynamic = 'force-static'
+
 export async function GET() {
   const config = await getReward()
   return NextResponse.json({ ...DEFAULT_REWARD, ...config })

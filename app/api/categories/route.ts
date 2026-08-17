@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { categories, articles } from '@/lib/data'
 
+export const dynamic = 'force-static'
+
 export async function GET() {
   const categoriesWithCount = categories.map((c) => ({
     ...c,

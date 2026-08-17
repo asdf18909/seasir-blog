@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPlaylist, addTrack, type MusicTrack } from '@/lib/storage'
 
+export const dynamic = 'force-static'
+
 // 获取播放列表
 export async function GET() {
   const playlist = await getPlaylist()

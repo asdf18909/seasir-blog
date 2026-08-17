@@ -34,7 +34,7 @@ export default function AdminArticles() {
 
   const handleDelete = async (id: string, title: string) => {
     if (!confirm(`确定删除「${title}」吗？此操作不可撤销。`)) return
-    await fetch(`/api/admin/articles/${id}`, { method: 'DELETE' })
+    await fetch(`/api/admin/article/${id}`, { method: 'DELETE' })
     broadcastStats() // 通知其他标签页统计已更新
     load()
   }

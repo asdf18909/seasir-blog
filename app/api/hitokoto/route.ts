@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { hitokotoList } from '@/lib/data'
 
+export const dynamic = 'force-static'
+
 export async function GET() {
   // 按日期取索引，每天显示不同一言
   const now = new Date()

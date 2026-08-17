@@ -150,10 +150,12 @@ export function ArticleFeed() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/articles')
+    fetch('/data/articles.json')
       .then((res) => res.json())
       .then((data) => {
-        setArticles(data.articles || [])
+        // GitHub Pages 静态部署：直接读取 JSON 文件
+        const list = Array.isArray(data) ? data : (data.articles || [])
+        setArticles(list)
         setLoading(false)
       })
       .catch(() => setLoading(false))

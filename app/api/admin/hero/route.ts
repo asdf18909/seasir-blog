@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getHero, saveHero, DEFAULT_HERO } from '@/lib/storage'
 
+export const dynamic = 'force-static'
+
 export async function GET() {
   const hero = await getHero()
   return NextResponse.json(hero)
